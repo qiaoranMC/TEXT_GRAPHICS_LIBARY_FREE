@@ -80,7 +80,6 @@ int remove_graphics(int start,int end,int id,int fill){
 			{graphics[sys[0][0]]=0;window[sys[0][0]]=fill;}
 }
 int window_show(){
-	printf("%d\n",sys[2][4]);
 	for(sys[0][0]=0;sys[0][0]<sys[2][4];sys[0][0]++)
 		printf("%c",window[sys[0][0]]);
 }
