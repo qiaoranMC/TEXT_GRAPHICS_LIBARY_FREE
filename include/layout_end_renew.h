@@ -5,7 +5,7 @@
 #include<conio.h>
 #include<time.h>
 char window[10000000]={0},sub_window[10000000]={0},button_icon[10000000]={0},bk=0,mouse_icon=0;
-int a=0,b=0,c=0,d=0,e=0,f=0,g=0,h=0,i=0,m,x=0,y=0,address=0,heiglt=0,width=0,fill=0,show=0,static_x=0,static_y=0,mouse=0,mouse_x=0,mouse_y=0,notes=0,ret=0,sys[3][10],sys_new[3][10],button[10000000]={0},text_box[10000000]={0},level[10000000]={0},cache[10000000]={0},graphics[0xffffff]={0},graphics_new[0xffffff][6];
+int a=0,b=0,c=0,d=0,e=0,f=0,g=0,h=0,i=0,m,x=0,y=0,address=0,heiglt=0,width=0,fill=0,show=0,static_x=0,static_y=0,mouse=0,mouse_x=0,mouse_y=0,notes=0,ret=0,dvc=0,sys[3][10],sys_new[3][10],button[10000000]={0},text_box[10000000]={0},level[10000000]={0},cache[10000000]={0},graphics[0xffffff]={0},graphics_new[0xffffff][6];
 void init(){
 	/*for(i=0;i<100000000;i++){
         window[i]=0;sub_window[i]=0;text_box[i]=0;button[i]=0;button_icon[i]=0;level[i]=0;cache[i]=0;
@@ -27,35 +27,39 @@ void init(){
 }
 //CREATE
 void window_create(int width,int heiglt,int fill){
-	static_x=width;static_y=heiglt;address=0;
-	for(y=0;y<heiglt;y++){
-		for(x=0;x<width;x++){
-			window[address]=fill;address++;
+	if(dvc==1||dvc==0){
+		static_x=width;static_y=heiglt;address=0;
+		for(y=0;y<heiglt;y++){
+			for(x=0;x<width;x++){
+				window[address]=fill;address++;
+			}
+			window[address]=10;address++;
 		}
-		window[address]=10;address++;
-	}
-	for(i=10000000;i>0;i--){
-	    if(window[i]==10){
-			break;
+		for(i=10000000;i>0;i--){
+		    if(window[i]==10){
+				break;
+			}
+			window[i]=0;
 		}
-		window[i]=0;
-	}
-	show=i;
-	sys[2][2]=width;sys[2][3]=heiglt;sys[1][0]=0;
-	for(sys[0][0]=0;sys[0][0]<heiglt;sys[0][0]++){
-		for(sys[0][1]=0;sys[0][1]<width;sys[0][1]++){
-			window[sys[1][0]]=fill;sys[1][0]++;
+		show=i;
+		sys[2][2]=width;sys[2][3]=heiglt;sys[1][0]=0;
+		for(sys[0][0]=0;sys[0][0]<heiglt;sys[0][0]++){
+			for(sys[0][1]=0;sys[0][1]<width;sys[0][1]++){
+				window[sys[1][0]]=fill;sys[1][0]++;
+			}
+			window[sys[1][0]]=sys[2][0];sys[1][0]++;
 		}
-		window[sys[1][0]]=sys[2][0];sys[1][0]++;
+		for(sys[1][0]=0xffffff;sys[1][0]>=0;sys[1][0]--){
+			if(window[sys[1][0]]==sys[2][0])
+				break;
+			else
+				window[sys[1][0]]=0;
+		}
+		sys[2][4]=sys[1][0];
 	}
-	for(sys[1][0]=0xffffff;sys[1][0]>=0;sys[1][0]--){
-		if(window[sys[1][0]]==sys[2][0])
-			break;
-		else
-			window[sys[1][0]]=0;
+	if(dvc==2||dvc==0){
+		sys_new[2][2]=width;sys_new[2][3]=heiglt;sys_new[2][4]=fill;
 	}
-	sys[2][4]=sys[1][0];
-	sys_new[2][2]=width;sys_new[2][3]=heiglt;sys_new[2][4]=fill;
 	return 0;
 }
 void add_sub_window(int start_x,int start_y,int end_x,int end_y,int id,int fill){
@@ -407,26 +411,29 @@ int mouse_move(){
 	//printf("%d\n",mouse);
 }
 void window_show(){
-	for(i=0;i<show;i++){
-		printf("%c",window[i]);
-	}
-	printf("\n\n");
-	for(sys[0][0]=0;sys[0][0]<sys[2][4];sys[0][0]++)
-		printf("%c",window[sys[0][0]]);
-	for(sys_new[0][0]=0;sys_new[0][0]<sys_new[2][3];sys_new[0][0]++)
-		for(sys_new[0][1]=0;sys_new[0][1]<sys_new[2][2];sys_new[0][1]++){ 	
-			gotoxy(sys_new[0][1],sys_new[0][0]);
-			printf("%c",sys_new[2][4]);
+	if(dvc==1||dvc==0){
+		for(i=0;i<show;i++){
+			printf("%c",window[i]);
 		}
-	return 0;
-	for(sys_new[0][0]=0;sys_new[0][0]<0x0;sys_new[0][0]++)
-		for(sys_new[0][1]=graphics_new[sys_new[0][0]][1];sys_new[0][1]<graphics_new[sys_new[0][0]][3];sys_new[0][1]++)
-			for(sys_new[0][2]=graphics_new[sys_new[0][0]][0];sys_new[0][2]<graphics_new[sys_new[0][0]][2];sys_new[0][2]++){
-				if(sys_new[0][2]>sys_new[2][2]||sys_new[0][1]>sys_new[2][3])
-					return -1;
-				gotoxy(sys_new[0][2],sys_new[0][1]);
-				printf("%c",graphics_new[sys_new[0][0]][4]);
+		printf("\n");
+		for(sys[0][0]=0;sys[0][0]<sys[2][4];sys[0][0]++)
+			printf("%c",window[sys[0][0]]);
+	}
+	if(dvc==2||dvc==0){
+		for(sys_new[0][0]=0;sys_new[0][0]<sys_new[2][3];sys_new[0][0]++)
+			for(sys_new[0][1]=0;sys_new[0][1]<=sys_new[2][2];sys_new[0][1]++){ 	
+				gotoxy(sys_new[0][1],sys_new[0][0]);
+				printf("%c",sys_new[2][4]);
 			}
+		for(sys_new[0][0]=0;sys_new[0][0]<0x0;sys_new[0][0]++)
+			for(sys_new[0][1]=graphics_new[sys_new[0][0]][1];sys_new[0][1]<graphics_new[sys_new[0][0]][3];sys_new[0][1]++)
+				for(sys_new[0][2]=graphics_new[sys_new[0][0]][0];sys_new[0][2]<graphics_new[sys_new[0][0]][2];sys_new[0][2]++){
+					if(sys_new[0][2]>sys_new[2][2]||sys_new[0][1]>sys_new[2][3])
+						return -1;
+					gotoxy(sys_new[0][2],sys_new[0][1]);
+					printf("%c",graphics_new[sys_new[0][0]][4]);
+				}
+	}
 	return 0;
 }
 void dbg(){
@@ -435,77 +442,89 @@ void dbg(){
     getch();
 }
 int new_graphics(int start_x,int start_y,int end_x,int end_y,int id,int fill){
-	sys[1][0]=0;
-	for(sys[0][0]=0;sys[0][0]<start_x;sys[0][0]++)
-		sys[1][0]++;
-	for(sys[0][0]=0;sys[0][0]<start_y;sys[0][0]++)
-		sys[1][0]=sys[1][0]+sys[2][2]+1;sys[1][1]=sys[1][0];
-	for(sys[0][0]=0;sys[0][0]<end_y;sys[0][0]++){
-		for(sys[0][1]=0;sys[0][1]<end_x;sys[0][1]++)
-			{window[sys[1][0]]=fill;graphics[sys[1][0]]=id;sys[1][0]++;}
-		sys[1][0]=sys[1][0]+sys[2][2]+1-end_x;
+	if(dvc==1||dvc==0){
+		sys[1][0]=0;
+		for(sys[0][0]=0;sys[0][0]<start_x;sys[0][0]++)
+			sys[1][0]++;
+		for(sys[0][0]=0;sys[0][0]<start_y;sys[0][0]++)
+			sys[1][0]=sys[1][0]+sys[2][2]+1;sys[1][1]=sys[1][0];
+		for(sys[0][0]=0;sys[0][0]<end_y;sys[0][0]++){
+			for(sys[0][1]=0;sys[0][1]<end_x;sys[0][1]++)
+				{window[sys[1][0]]=fill;graphics[sys[1][0]]=id;sys[1][0]++;}
+			sys[1][0]=sys[1][0]+sys[2][2]+1-end_x;
+		}
+		sys[1][2]=sys[1][0];
 	}
-	sys[1][2]=sys[1][0];
-	if(start_x>sys[2][2]||start_y>sys[2][3]||end_x>sys[2][2]||end_y>sys[2][3])
-		return -1;
-	graphics_new[id][0]=start_x;graphics_new[id][1]=start_y;graphics_new[id][2]=end_x;graphics_new[id][3]=end_y;graphics_new[id][4]=fill;
+	if(dvc==2||dvc==0){
+		if(start_x>sys[2][2]||start_y>sys[2][3]||end_x>sys[2][2]||end_y>sys[2][3])
+			return -1;
+		graphics_new[id][0]=start_x;graphics_new[id][1]=start_y;graphics_new[id][2]=end_x;graphics_new[id][3]=end_y;graphics_new[id][4]=fill;
+	}
 	return 0;
 }
 int fill_graphics_picture(int start,int end,int id,char picture[0xffffff],int len,int op){
-	sys[1][0]=0;
-	for(sys[0][0]=start;sys[0][0]<end;sys[0][0]++){
-		if(graphics[sys[0][0]]==id)
-			break;
-		if(sys[0][0]==sys[2][4])
-			return -1;
-	}
-	sys[1][0]=sys[0][0];sys[1][1]=sys[0][0];
-	for(sys[0][0]=0;sys[0][0]<len;sys[0][0]++){
-		if(graphics[sys[1][0]]==id){
-			if(picture[sys[0][0]]==10){
-				for(;graphics[sys[1][0]]!=id;sys[1][0]++);
-				for(;graphics[sys[1][0]]==id;sys[1][0]++);
-				continue;
-			}
-			if(op==1){
-				if(picture[sys[0][0]]>=32&&picture[sys[0][0]]<=126)
-					window[sys[1][0]]=picture[sys[0][0]];
-				else
-					window[sys[1][0]]=sys[2][1];
-			}else
-				window[sys[1][0]]=picture[sys[0][0]];
-		}else
-			sys[0][0]--;
-		sys[1][0]++;
-		if(sys[1][0]>=sys[2][4]||sys[0][0]>=0xffffff)
-			return -2;
-	}
-	sys[1][2]=sys[1][0];
-	sys[0][3]=0;
-	for(sys[0][1]=graphics_new[id][1];sys[0][1]<graphics_new[id][3];sys[0][1]++){
-		for(sys[0][2]=graphics_new[id][0];sys[0][2]<graphics_new[id][2];sys[0][2]++){
-			if(picture[sys[0][3]]==10){
-				sys[0][1]++;sys[0][2]=graphics_new[id][0];sys[0][3]++;
-			}
-			gotoxy(sys[0][2],sys[0][1]);
-			printf("%c",picture[sys[0][3]++]);
-			if(sys[0][3]>len)
+	if(dvc==1||dvc==0){
+		sys[1][0]=0;
+		for(sys[0][0]=start;sys[0][0]<end;sys[0][0]++){
+			if(graphics[sys[0][0]]==id)
 				break;
+			if(sys[0][0]==sys[2][4])
+				return -1;
+		}
+		sys[1][0]=sys[0][0];sys[1][1]=sys[0][0];
+		for(sys[0][0]=0;sys[0][0]<len;sys[0][0]++){
+			if(graphics[sys[1][0]]==id){
+				if(picture[sys[0][0]]==10){
+					for(;graphics[sys[1][0]]!=id;sys[1][0]++);
+					for(;graphics[sys[1][0]]==id;sys[1][0]++);
+					continue;
+				}
+				if(op==1){
+					if(picture[sys[0][0]]>=32&&picture[sys[0][0]]<=126)
+						window[sys[1][0]]=picture[sys[0][0]];
+					else
+						window[sys[1][0]]=sys[2][1];
+				}else
+					window[sys[1][0]]=picture[sys[0][0]];
+			}else
+				sys[0][0]--;
+			sys[1][0]++;
+			if(sys[1][0]>=sys[2][4]||sys[0][0]>=0xffffff)
+				return -2;
+		}
+		sys[1][2]=sys[1][0];
+		sys[0][3]=0;
+	}
+	if(dvc==2||dvc==0){
+		for(sys[0][1]=graphics_new[id][1];sys[0][1]<graphics_new[id][3];sys[0][1]++){
+			for(sys[0][2]=graphics_new[id][0];sys[0][2]<graphics_new[id][2];sys[0][2]++){
+				if(picture[sys[0][3]]==10){
+					sys[0][1]++;sys[0][2]=graphics_new[id][0];sys[0][3]++;
+				}
+				gotoxy(sys[0][2],sys[0][1]);
+				printf("%c",picture[sys[0][3]++]);
+				if(sys[0][3]>len)
+					break;
+			}
 		}
 	}
 	return 0;
 }
 int remove_graphics(int start,int end,int id,int fill){
-	for(sys[0][0]=start;sys[0][0]<=end||sys[0][0]<=sys[2][4];sys[0][0]++)
-		if(graphics[sys[0][0]]==id)
-			{graphics[sys[0][0]]=0;window[sys[0][0]]=fill;}
-	for(sys[0][1]=graphics_new[id][1];sys[0][1]<graphics_new[id][3];sys[0][1]++){
-		for(sys[0][2]=graphics_new[id][0];sys[0][2]<graphics_new[id][2];sys[0][2]++){
-			gotoxy(sys[0][2],sys[0][1]);
-			printf("%c",fill);
-		}
+	if(dvc==1||dvc==0){
+		for(sys[0][0]=start;sys[0][0]<=end||sys[0][0]<=sys[2][4];sys[0][0]++)
+			if(graphics[sys[0][0]]==id)
+				{graphics[sys[0][0]]=0;window[sys[0][0]]=fill;}
 	}
-	graphics_new[id][0]=0;graphics_new[id][1]=0;graphics_new[id][2]=0;graphics_new[id][3]=0;graphics_new[id][4]=0;
+	if(dvc==2||dvc==0){
+		for(sys[0][1]=graphics_new[id][1];sys[0][1]<graphics_new[id][3];sys[0][1]++){
+			for(sys[0][2]=graphics_new[id][0];sys[0][2]<graphics_new[id][2];sys[0][2]++){
+				gotoxy(sys[0][2],sys[0][1]);
+				printf("%c",fill);
+			}
+		}
+		graphics_new[id][0]=0;graphics_new[id][1]=0;graphics_new[id][2]=0;graphics_new[id][3]=0;graphics_new[id][4]=0;
+	}
 	return 0;
 }
 int print_bg_only(){
@@ -524,6 +543,7 @@ int print_graphics_only(int start,int end){
 			}
 }
 int main(){
+	dvc=2;
 	init();
 	window_create(40,10,35);
 	window_show();

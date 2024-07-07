@@ -167,7 +167,7 @@ void scanner(int scanmode,int op,int input,int input1){
     sys[0]=0;
     if(scanmode==0){
         if(op==0){
-            for(sys[1]=0;sys[1]<show;sys[1]++){
+               for(sys[1]=0;sys[1]<show;sys[1]++){
                 if(window[sys[1]]==input){
                     cache[sys[0]]=sys[1];sys[0]++;
                 }

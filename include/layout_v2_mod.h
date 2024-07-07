@@ -1,0 +1,380 @@
+#include<../include/layout_v2_config.h>
+void add_sub_window(int start_x,int start_y,int end_x,int end_y,int id,int fill){
+    sys[1][0]=0;
+    for(sys[0][0]=0;sys[0][0]<start_x;sys[0][0]++)
+        sys[1][0]++; 
+    for(sys[0][0]=0;sys[0][0]<start_y;sys[0][0]++)
+        sys[1][0]=sys[1][0]+sys[2][0]+1;
+    cache[0]=sys[1][0];
+    for(sys[0][0]=0;sys[0][0]<end_y;sys[0][0]++){
+        for(sys[0][1]=0;sys[0][1]<end_x;sys[0][1]++){
+            sub_window[sys[1][0]]=id;window[sys[1][0]]=fill;sys[1][0]++;
+        }
+        sys[1][0]=sys[1][0]+sys[2][0]+1-end_x;
+    }
+    cache[1]=sys[1][0];
+}
+void add_text_box(int start_x,int start_y,int end_x,int end_y,int id){
+    sys[1][0]=0;
+    for(sys[0][0]=0;sys[0][0]<start_x;sys[0][0]++){
+        sys[1][0]++;
+    }
+    for(sys[0][0]=0;sys[0][0]<start_y;sys[0][0]++){
+        sys[1][0]=sys[1][0]+sys[2][0]+1;
+    }
+    cache[0]=sys[1][0];
+    for(sys[0][0]=0;sys[0][0]<end_y;sys[0][0]++){
+        for(sys[0][1]=0;sys[0][1]<end_x;sys[0][1]++){
+            text_box[sys[1][0]]=id;window[sys[1][0]]=ascii[1];sys[1][0]++;
+        }
+        sys[1][0]=sys[1][0]+sys[2][0]+1-end_x;
+    }
+    cache[1]=sys[1][0];
+}
+void add_button(int start_x,int start_y,int end_x,int end_y,int id,char button_icon[100000000]){
+	sys[1][0]=0;sys[0][0]=0;sys[0][1]=0;sys[0][2]=0;sys[0][0]=strlen(button_icon);
+	for(sys[0][3]=0;sys[0][3]<start_x;sys[0][3]++){
+		sys[1][0]++;
+	}
+	for(sys[0][3]=0;sys[0][3]<start_y;sys[0][3]++){
+		sys[1][0]=sys[1][0]+sys[2][0]+1;
+	}
+	cache[0]=sys[1][0];
+	for(sys[0][3]=0;sys[0][3]<end_y;sys[0][3]++){
+		for(sys[0][4]=0;sys[0][4]<end_x;sys[0][4]++){
+			button[sys[1][0]]=id;
+			if(sys[0][1]>=sys[0][0]){
+				window[sys[1][0]]=ascii[1];sys[1][0]++;
+			}else if(button_icon[sys[1][0]]==sys[2][0]){
+                cache[1]=sys[1][0];
+                for(;button[sys[1][0]]!=id;sys[1][0]++){}
+                cache[2]=sys[1][0];
+                for(;button[sys[1][0]]==id;sys[1][0]++){}
+                cache[3]=sys[1][0];
+			}else{
+				window[sys[1][0]]=button_icon[sys[1][0]];sys[0][1]++;
+			}
+			sys[1][0]++;
+		}
+		sys[1][0]=sys[1][0]+sys[2][0]+1-end_x;
+	}
+	cache[4]=sys[1][0];
+}
+void add_level(int end_x,int end_y,int id){
+    sys[1][0]=0;
+    for(sys[0][0]=0;sys[0][0]<end_x;sys[0][0]++){
+        sys[1][0]++;
+    }
+    for(sys[0][0]=0;sys[0][0]<end_y;sys[0][0]++){
+        sys[1][0]=sys[1][0]+sys[2][0]+1; 
+    }
+    cache[0]=sys[1][0];level[sys[1][0]]=id;window[sys[1][0]]=sys[2][1];
+}
+void edit_text(int start,int end,char text[100000000],int size,int id,int locate,int op){
+    sys[0][0]=0;sys[0][1]=0;sys[0][2]=0;sys[1][0]=0;
+    for(sys[0][3]=start;sys[0][3]<end;sys[0][3]++){
+        if(text_box[sys[0][3]]==id){
+            break;
+        }
+        sys[1][0]++;
+        if(sys[1][0]==sys[2][2]){
+            return;
+        }
+    }
+    cache[0]=sys[1][0];
+    for(sys[0][3]=0;sys[0][3]<locate;sys[0][3]++){
+        sys[1][0]++;
+        if(text_box[sys[1][0]]!=id){
+            sys[1][0]=sys[1][0]+sys[2][0]+1;
+        }
+    }
+    cache[1]=sys[1][0];
+    for(sys[0][3]=0;sys[0][3]<size;sys[0][3]++){
+        if(text_box[sys[1][0]]==id){
+            if(window[sys[1][0]]==mouse_icon){
+                continue;
+            }
+            if(text[sys[0][3]]==ascii[0]){
+                cache[2]=sys[1][0];
+                for(;text_box[sys[1][0]]!=id;sys[1][0]++){}
+                cache[3]=sys[1][0];
+                for(;text_box[sys[1][0]]==id;sys[1][0]++){}
+                cache[4]=sys[1][0];
+                continue;
+            }
+            if(op==1){
+                if(text[sys[0][3]]>=32&&text[sys[0][3]]<=126){
+                    window[sys[1][0]]=text[sys[0][3]];
+                }else{
+                    window[sys[1][0]]=ascii[1];
+                }
+            }else{
+                window[sys[1][0]]=text[sys[0][3]];
+            }
+            sys[1][0]++;
+        }else{
+            sys[0][3]--;sys[1][0]++;
+            if(sys[1][0]==sys[2][4]){
+                return;
+            }
+        }
+    }
+    cache[5]=sys[1][0];
+}
+void scanner(int scanmode,int op,int input,int input1){
+    sys[0][0]=0;
+    if(scanmode==0){
+        if(op==0){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(window[sys[0][1]]==input){
+                    cache[sys[0][0]]=sys[0][1];sys[0][0]++;
+                }
+            }
+        }
+        if(op==1){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(window[sys[0][1]]==input){
+                    window[sys[0][1]]=input1;
+                }
+            }
+        }
+    }
+    if(scanmode==1){
+        if(op==0){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(sub_window[sys[0][1]]==input){
+                    cache[sys[0][0]]=sys[0][1];sys[0][0]++;
+                }
+            }
+        }
+        if(op==1){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(sub_window[sys[0][1]]==input){
+                    sub_window[sys[0][1]]=input1;
+                }
+            }
+        }
+    }
+    if(scanmode==2){
+        if(op==0){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(button[sys[0][1]]==input){
+                    cache[sys[0][0]]=sys[0][1];sys[0][0]++;
+                }
+            }
+        }
+        if(op==1){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(button[sys[0][1]]==input){
+                    button[sys[0][1]]=input1;
+                }
+            }
+        }
+    }
+    if(scanmode==3){
+        if(op==0){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(text_box[sys[0][1]]==input){
+                    cache[sys[0][0]]=sys[0][1];sys[0][0]++;
+                }
+            }
+        }
+        if(op==1){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(text_box[sys[0][1]]==input){
+                    text_box[sys[0][1]]=input1;
+                }
+            }
+        }
+    }
+    if(scanmode==4){
+        if(op==0){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(level[sys[0][1]]==input){
+                    cache[sys[0][0]]=sys[0][1];sys[0][0]++;
+                }
+            }
+        }
+        if(op==1){
+            for(sys[0][1]=0;sys[0][1]<sys[2][2];sys[0][1]++){
+                if(level[sys[0][1]]==input){
+                    level[sys[0][1]]=input1;
+                }
+            }
+        }
+    }
+}
+int level_click_cmp(int id){
+    if(level[mouse]==id){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+int remove_sub_window(int start,int end,int id,int fill,int fail,int op){
+    sys[0][0]=0;sys[0][1]=0;sys[1][0]=0;
+    if(sub_window[mouse]==id&&op==1||op==3){
+        sys[0][1]=1;
+    }
+    for(sys[0][2]=start;sys[0][2]<end;sys[0][2]++){
+        if(sub_window[sys[0][2]]==id){
+            if(sys[0][0]==0){
+                cache[0]=sys[0][2];sys[0][0]=1;
+            }
+            sub_window[sys[0][2]]=0;
+            if(window[sys[0][2]]==mouse_icon){
+                continue;
+            }
+            window[sys[0][2]]=fill;
+        }
+    }
+    cache[1]=sys[0][2];
+    if(sys[0][1]==1){
+        sys[0][1]=0;
+        if(sys[0][0]==1){
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fail;
+            }
+            window[mouse]=mouse_icon;
+            return fill;
+        }else{
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fill;
+            }
+            window[mouse]=mouse_icon;
+            return fail;
+        }
+    }
+}
+int remove_text_box(int start,int end,int id,int fill,int fail,int op){
+    sys[0][0]=0;sys[0][1]=0;sys[1][0]=0;
+    if(text_box[mouse]==id&&op==1||op==3){
+        sys[0][1]=1;
+    }
+    for(sys[0][2]=start;sys[0][2]<end;sys[0][2]++){
+        if(text_box[sys[0][2]]==id){
+            if(sys[0][0]==0){
+                cache[0]=sys[0][2];sys[0][0]=1;
+            }
+            text_box[sys[0][2]]=0;
+            if(window[sys[0][2]]==mouse_icon){
+                continue;
+            }
+            window[sys[0][2]]=fill;
+        }
+    }
+    cache[1]=sys[0][2];
+    if(sys[0][1]==1){
+        sys[0][1]=0;
+        if(sys[0][0]==1){
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fail;
+            }
+            window[mouse]=mouse_icon;
+            return fill;
+        }else{
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fill;
+            }
+            window[mouse]=mouse_icon;
+            return fail;
+        }
+    }
+}
+int remove_button(int start,int end,int id,int fill,int fail,int op){
+    sys[0][0]=0;sys[0][1]=0;sys[1][0]=0;
+    if(button[mouse]==id&&op==1||op==3){
+        sys[0][1]=1;
+    }
+    for(sys[0][2]=start;sys[0][2]<end;sys[0][2]++){
+        if(button[sys[0][2]]==id){
+            if(sys[0][0]==0){
+                cache[0]=sys[0][2];sys[0][0]=1;
+            }
+            button[sys[0][2]]=0;
+            if(window[sys[0][2]]==mouse_icon){
+                continue;
+            }
+            window[sys[0][2]]=fill;
+        }
+    }
+    cache[1]=sys[0][2];
+    if(sys[0][1]==1){
+        sys[0][1]=0;
+        if(sys[0][0]==1){
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fail;
+            }
+            window[mouse]=mouse_icon;
+            return fill;
+        }else{
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fill;
+            }
+            window[mouse]=mouse_icon;
+            return fail;
+        }
+    }
+}
+int remove_level(int start,int end,int id,int fill,int fail,int op){
+    sys[0][0]=0;sys[0][1]=0;sys[1][0]=0;
+    if(level[mouse]==id&&op==1||op==3){
+        sys[0][1]=1;
+    }
+    for(sys[0][2]=start;sys[0][2]<end;sys[0][2]++){
+        if(level[sys[0][2]]==id){
+            if(sys[0]==0){
+                cache[0]=sys[0][2];sys[0][0]=1;
+            }
+            level[sys[0][2]]=0;
+            if(window[sys[0][2]]==mouse_icon){
+                continue;
+            }
+            window[sys[0][2]]=fill;
+        }
+    }
+    cache[1]=sys[0][2];
+    if(sys[0][1]==1){
+        sys[0][1]=0;
+        if(sys[0][0]==1){
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fail;
+            }
+            window[mouse]=mouse_icon;
+            return fill;
+        }else{
+            if(op==2||op==3){
+                window[mouse]=mouse_icon;
+                return fill;
+            }
+            window[mouse]=mouse_icon;
+            return fail;
+        }
+    }
+}
+int mouse_move(){
+    sys[0][0]=getch();
+	if(sys[0][0]==ascii[2]){
+		mouse=mouse-sys[2][0]-1;
+	}
+	if(sys[0][0]==ascii[3]){
+		mouse=mouse+sys[2][0]+1;
+	}
+	if(sys[0][0]==ascii[4]){
+		mouse=mouse-1;
+	}
+	if(sys[0][0]==ascii[5]){
+		mouse=mouse+1;
+	}
+	if(sys[0][0]==ascii[0]){
+   		return 1;
+	}
+	//printf("%d\n",mouse);
+}
